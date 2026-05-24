@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 const adminLinks = [
   { id: 1, title: 'Productos', href: '/admin/productos' },
   { id: 2, title: 'Crear Producto', href: '/admin/crear-producto' },
+  { id: 3, title: 'Pedidos', href: '/admin/pedidos' },
 ];
 
 export const AdminNavbar = () => {

@@ -1,8 +1,8 @@
 import { createBrowserRouter } from 'react-router-dom'
 import { RootLayout } from '../layouts/RootLayout';
-import { AboutPage, HomePage, CinturonesPage, ProductDetailPage } from '../pages';
+import { AboutPage, HomePage, CinturonesPage, ProductosPage, MisPedidosPage, ProductDetailPage } from '../pages';
 import { AdminLayout } from '../admin/AdminLayout';
-import { AdminDashboardPage, CreateProductPage, EditProductPage, ProductListPage } from '../admin/pages';
+import { AdminDashboardPage, CreateProductPage, EditProductPage, ProductListPage, PedidosPage } from '../admin/pages';
 
 export const router = createBrowserRouter([
     {
@@ -18,12 +18,20 @@ export const router = createBrowserRouter([
                 element: <CinturonesPage />
             },
             {
+                path: 'productos',
+                element: <ProductosPage />
+            },
+            {
                 path: 'nosotros',
                 element: <AboutPage />
             },
             {
                 path: 'productos/:id',
                 element: <ProductDetailPage />
+            },
+            {
+                path: 'cuenta',
+                element: <MisPedidosPage />
             },
         ]
     },
@@ -46,6 +54,10 @@ export const router = createBrowserRouter([
             {
                 path: 'editar-producto/:id',
                 element: <EditProductPage />
+            },
+            {
+                path: 'pedidos',
+                element: <PedidosPage />
             },
         ]
     }
