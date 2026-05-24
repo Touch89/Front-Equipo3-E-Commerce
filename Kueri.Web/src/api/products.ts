@@ -1,3 +1,5 @@
+export type Categoria = 'Cinturones' | 'Billeteras' | 'Carteras';
+
 export type Product = {
   id: number;
   nombre: string;
@@ -6,6 +8,7 @@ export type Product = {
   precio: number;
   sku: string;
   stock: number;
+  categoria: Categoria;
 };
 
 // ── Mock data – placeholder until real API is connected ───────────────────────
@@ -19,6 +22,7 @@ export const MOCK_PRODUCTS: Product[] = [
     precio: 89.9,
     sku: 'BELT-001',
     stock: 15,
+    categoria: 'Cinturones',
   },
   {
     id: 2,
@@ -29,6 +33,7 @@ export const MOCK_PRODUCTS: Product[] = [
     precio: 109.9,
     sku: 'BELT-002',
     stock: 8,
+    categoria: 'Cinturones',
   },
   {
     id: 3,
@@ -39,6 +44,7 @@ export const MOCK_PRODUCTS: Product[] = [
     precio: 99.9,
     sku: 'BELT-003',
     stock: 20,
+    categoria: 'Cinturones',
   },
   {
     id: 4,
@@ -49,6 +55,7 @@ export const MOCK_PRODUCTS: Product[] = [
     precio: 129.9,
     sku: 'BELT-004',
     stock: 10,
+    categoria: 'Cinturones',
   },
   {
     id: 5,
@@ -59,6 +66,7 @@ export const MOCK_PRODUCTS: Product[] = [
     precio: 149.9,
     sku: 'BELT-005',
     stock: 5,
+    categoria: 'Cinturones',
   },
   {
     id: 6,
@@ -69,6 +77,73 @@ export const MOCK_PRODUCTS: Product[] = [
     precio: 119.9,
     sku: 'BELT-006',
     stock: 12,
+    categoria: 'Cinturones',
+  },
+  {
+    id: 7,
+    nombre: 'Billetera Clásica Negra',
+    descripcion:
+      'Billetera de cuero genuino con múltiples compartimientos para tarjetas. Diseño delgado y elegante, ideal para el bolsillo.',
+    imagen_url: 'https://placehold.co/600x400?text=Billetera+Clasica+Negra',
+    precio: 69.9,
+    sku: 'WALL-001',
+    stock: 18,
+    categoria: 'Billeteras',
+  },
+  {
+    id: 8,
+    nombre: 'Billetera Marrón con Monedero',
+    descripcion:
+      'Billetera de cuero curtido vegetalmente con monedero integrado y porta-billetes amplio. Costura doble resistente.',
+    imagen_url: 'https://placehold.co/600x400?text=Billetera+Marron+Monedero',
+    precio: 89.9,
+    sku: 'WALL-002',
+    stock: 10,
+    categoria: 'Billeteras',
+  },
+  {
+    id: 9,
+    nombre: 'Billetera Minimalista Camel',
+    descripcion:
+      'Billetera ultrafina de cuero nobuck para llevar lo esencial: hasta 6 tarjetas y billetes doblados. Perfecta para el día a día.',
+    imagen_url: 'https://placehold.co/600x400?text=Billetera+Minimalista+Camel',
+    precio: 59.9,
+    sku: 'WALL-003',
+    stock: 25,
+    categoria: 'Billeteras',
+  },
+  {
+    id: 10,
+    nombre: 'Cartera Dama Cuero Negro',
+    descripcion:
+      'Cartera de mano elaborada en cuero genuino negro. Interior forrado con múltiples bolsillos y cierre de cremallera principal.',
+    imagen_url: 'https://placehold.co/600x400?text=Cartera+Dama+Negro',
+    precio: 159.9,
+    sku: 'HAND-001',
+    stock: 7,
+    categoria: 'Carteras',
+  },
+  {
+    id: 11,
+    nombre: 'Cartera Dama Cuero Camel',
+    descripcion:
+      'Cartera de hombro en cuero natural tono camel. Correa ajustable, bolsillo frontal con cierre magnético y acabado artesanal.',
+    imagen_url: 'https://placehold.co/600x400?text=Cartera+Dama+Camel',
+    precio: 179.9,
+    sku: 'HAND-002',
+    stock: 5,
+    categoria: 'Carteras',
+  },
+  {
+    id: 12,
+    nombre: 'Cartera Clutch Marrón',
+    descripcion:
+      'Clutch de cuero pulido en tono marrón oscuro. Cierre de hebilla dorada, interior con espacio para teléfono y tarjetas. Elegante y versátil.',
+    imagen_url: 'https://placehold.co/600x400?text=Cartera+Clutch+Marron',
+    precio: 129.9,
+    sku: 'HAND-003',
+    stock: 9,
+    categoria: 'Carteras',
   },
 ];
 

@@ -1,5 +1,7 @@
 const BASE_URL = import.meta.env.VITE_API_URL as string;
 
+export type Categoria = 'Cinturones' | 'Billeteras' | 'Carteras';
+
 export type Product = {
   id: number;
   nombre: string;
@@ -8,6 +10,7 @@ export type Product = {
   precio: number;
   sku: string;
   stock: number;
+  categoria: Categoria;
 };
 
 export type ProductPayload = Omit<Product, 'id'>;

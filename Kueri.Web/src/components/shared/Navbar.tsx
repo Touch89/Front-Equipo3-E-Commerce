@@ -31,9 +31,11 @@ export const Navbar = () => {
                     <HiOutlineSearch size={25} />
                 </button>
                 <div className="relative">
-                    {/* User Nav */}
-                    <Link to='/account'
-                        className='border-2 border-slate-700 w-9 h-9 rounded-full grid place-items-center text-lg font-bold'>
+                    <Link
+                        to='/cuenta'
+                        title="Mis pedidos"
+                        className='border-2 border-slate-700 w-9 h-9 rounded-full grid place-items-center text-lg font-bold hover:border-cyan-600 transition-colors'
+                    >
                     </Link>
                 </div>
                 <button className='relative' onClick={openCart}>
