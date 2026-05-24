@@ -77,7 +77,7 @@ export const ProductDetailPage = () => {
           </div>
 
           <p className="text-3xl font-bold text-slate-900">
-            S/ {product.precio.toFixed(2)}
+            MXN {product.precio.toFixed(2)}
           </p>
 
           <p className="leading-relaxed text-slate-600">{product.descripcion}</p>

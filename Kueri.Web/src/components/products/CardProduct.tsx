@@ -26,7 +26,7 @@ export const CardProduct = ({ product }: Props) => {
 
         <div className="mt-auto flex items-center justify-between pt-3">
           <span className="text-lg font-bold text-slate-900">
-            S/ {product.precio.toFixed(2)}
+            MXN {product.precio.toFixed(2)}
           </span>
           <div className="flex items-center gap-2">
             <button

@@ -59,7 +59,7 @@ export const CartDrawer = () => {
                       {product.nombre}
                     </p>
                     <p className="text-sm font-bold text-slate-800">
-                      S/ {product.precio.toFixed(2)}
+                      MXN {product.precio.toFixed(2)}
                     </p>
                     {/* Quantity controls */}
                     <div className="mt-1 flex items-center gap-2">
@@ -100,7 +100,7 @@ export const CartDrawer = () => {
             <div className="border-t border-slate-200 px-5 py-5">
               <div className="mb-4 flex justify-between text-base font-bold text-slate-900">
                 <span>Total</span>
-                <span>S/ {total.toFixed(2)}</span>
+                <span>MXN {total.toFixed(2)}</span>
               </div>
               <button className="mb-2 w-full rounded-xl bg-slate-900 py-3 font-semibold text-white transition hover:bg-cyan-700">
                 Proceder al pago

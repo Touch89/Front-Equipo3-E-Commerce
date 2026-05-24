@@ -71,7 +71,7 @@ const OrderCard = ({ order }: { order: Order }) => (
           <div className="flex flex-1 items-center justify-between gap-2 min-w-0">
             <p className="truncate text-sm font-medium text-slate-800">{item.nombre}</p>
             <p className="shrink-0 text-sm text-slate-500">
-              {item.cantidad} × S/ {item.precio.toFixed(2)}
+              {item.cantidad} × MXN{item.precio.toFixed(2)}
             </p>
           </div>
         </li>
@@ -81,7 +81,7 @@ const OrderCard = ({ order }: { order: Order }) => (
     {/* Footer */}
     <div className="flex justify-end border-t border-slate-100 px-5 py-3">
       <p className="text-sm font-bold text-slate-900">
-        Total: S/ {order.total.toFixed(2)}
+        Total: MXN{order.total.toFixed(2)}
       </p>
     </div>
   </li>

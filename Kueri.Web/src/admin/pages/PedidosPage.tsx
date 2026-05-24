@@ -70,7 +70,7 @@ export const PedidosPage = () => {
                     {order.items.length} {order.items.length === 1 ? 'producto' : 'productos'}
                   </td>
                   <td className="px-5 py-4 font-bold text-slate-800">
-                    S/ {order.total.toFixed(2)}
+                    MXN {order.total.toFixed(2)}
                   </td>
                   <td className="px-5 py-4">
                     <select
