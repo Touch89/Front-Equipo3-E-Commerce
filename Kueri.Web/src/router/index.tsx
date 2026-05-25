@@ -1,6 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom'
 import { RootLayout } from '../layouts/RootLayout';
-import { AboutPage, HomePage, CinturonesPage, ProductosPage, MisPedidosPage, ProductDetailPage } from '../pages';
+import { AboutPage, HomePage, CinturonesPage, ProductosPage, MisPedidosPage, ProductDetailPage, CheckoutPage } from '../pages';
 import { AdminLayout } from '../admin/AdminLayout';
 import { AdminDashboardPage, CreateProductPage, EditProductPage, ProductListPage, PedidosPage, CustomerListPage, CreateCustomerPage } from '../admin/pages';
 
@@ -32,6 +32,10 @@ export const router = createBrowserRouter([
             {
                 path: 'cuenta',
                 element: <MisPedidosPage />
+            },
+            {
+                path: 'checkout',
+                element: <CheckoutPage />
             },
         ]
     },
