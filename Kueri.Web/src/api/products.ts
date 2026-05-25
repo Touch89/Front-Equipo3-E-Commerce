@@ -181,4 +181,10 @@ export const productsApi = {
     //   .catch(() => MOCK_PRODUCTS.find((p) => p.id === Number(id)));
     return Promise.resolve(MOCK_PRODUCTS.find((p) => p.id === Number(id)));
   },
+
+  /** Returns all unique categories. */
+  getCategories(): Promise<Categoria[]> {
+    const categories: Categoria[] = ['Cinturones', 'Billeteras', 'Carteras'];
+    return Promise.resolve(categories);
+  },
 };

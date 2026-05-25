@@ -5,6 +5,7 @@ const adminLinks = [
   { id: 1, title: 'Productos', href: '/admin/productos' },
   { id: 2, title: 'Crear Producto', href: '/admin/crear-producto' },
   { id: 3, title: 'Pedidos', href: '/admin/pedidos' },
+  { id: 4, title: 'Clientes', href: '/admin/clientes' },
 ];
 
 export const AdminNavbar = () => {
