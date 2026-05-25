@@ -32,6 +32,22 @@ export const AdminDashboardPage = () => {
           <span className="text-lg font-semibold text-slate-900">Pedidos</span>
           <span className="text-sm text-slate-500">Ver y gestionar los pedidos de los usuarios.</span>
         </Link>
+
+        <Link
+          to="/admin/clientes"
+          className="flex flex-col gap-1 rounded-xl border border-slate-200 p-5 transition hover:border-cyan-600 hover:shadow-md"
+        >
+          <span className="text-lg font-semibold text-slate-900">Clientes</span>
+          <span className="text-sm text-slate-500">Ver y gestionar los clientes registrados.</span>
+        </Link>
+
+        <Link
+          to="/admin/crear-cliente"
+          className="flex flex-col gap-1 rounded-xl border border-slate-200 p-5 transition hover:border-cyan-600 hover:shadow-md"
+        >
+          <span className="text-lg font-semibold text-slate-900">Crear cliente</span>
+          <span className="text-sm text-slate-500">Registra un nuevo cliente en el sistema.</span>
+        </Link>
       </div>
     </section>
   );
