@@ -4,6 +4,7 @@ import express from 'express';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { registerProductsEndpoints } from './endpoints/productsEndpoints.js';
+import { registerOrdersEndpoints } from './endpoints/ordersEndpoints.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -23,6 +24,7 @@ app.get('/health', (_req, res) => {
 });
 
 registerProductsEndpoints(app);
+registerOrdersEndpoints(app);
 
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console

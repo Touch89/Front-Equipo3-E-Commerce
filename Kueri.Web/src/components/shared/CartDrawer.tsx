@@ -1,10 +1,17 @@
 import { HiOutlineShoppingCart } from 'react-icons/hi';
 import { HiXMark, HiMinus, HiPlus } from 'react-icons/hi2';
+import { useNavigate } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 
 export const CartDrawer = () => {
+  const navigate = useNavigate();
   const { items, isOpen, closeCart, removeItem, updateQuantity, total, clearCart } =
     useCart();
+
+  function handleCheckout() {
+    closeCart();
+    navigate('/checkout');
+  }
 
   return (
     <>
@@ -102,7 +109,10 @@ export const CartDrawer = () => {
                 <span>Total</span>
                 <span>MXN {total.toFixed(2)}</span>
               </div>
-              <button className="mb-2 w-full rounded-xl bg-slate-900 py-3 font-semibold text-white transition hover:bg-cyan-700">
+              <button
+                onClick={handleCheckout}
+                className="mb-2 w-full rounded-xl bg-slate-900 py-3 font-semibold text-white transition hover:bg-cyan-700"
+              >
                 Proceder al pago
               </button>
               <button
