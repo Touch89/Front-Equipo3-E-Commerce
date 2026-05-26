@@ -14,6 +14,10 @@ export type Product = {
 };
 
 export type ProductPayload = Omit<Product, 'id'>;
+export type DeleteProductIdentity = {
+  sku?: string;
+  nombre?: string;
+};
 
 async function handleResponse<T>(response: Response): Promise<T> {
   if (!response.ok) {
@@ -48,8 +52,13 @@ export const productsApi = {
     }).then((r) => handleResponse<Product>(r));
   },
 
-  delete(id: number | string): Promise<void> {
-    return fetch(`${BASE_URL}/productos/${id}`, {
+  delete(id: number | string, identity?: DeleteProductIdentity): Promise<void> {
+    const params = new URLSearchParams();
+    if (identity?.sku) params.set('sku', identity.sku);
+    if (identity?.nombre) params.set('nombre', identity.nombre);
+    const suffix = params.toString() ? `?${params.toString()}` : '';
+
+    return fetch(`${BASE_URL}/productos/${id}${suffix}`, {
       method: 'DELETE',
     }).then((r) => {
       if (!r.ok) throw new Error(`Error ${r.status} al eliminar producto`);

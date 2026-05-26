@@ -28,7 +28,7 @@ function getConfig() {
 }
 
 const localProducts = [];
-let sequenceId = 1;
+let sequenceId = Number(process.env.LOCAL_PRODUCT_START_ID || 1000000);
 
 const defaultCategory = 'Cinturones';
 
@@ -299,6 +299,29 @@ async function createWordpressProduct(product) {
   return { id: created.id, source: 'wordpress' };
 }
 
+async function deleteWordpressProduct(id) {
+  const config = getConfig();
+  const { baseUrl, username, appPassword, consumerKey, consumerSecret } = config.wordpress;
+  if (!baseUrl) {
+    throw new Error('WordPress no esta configurado.');
+  }
+
+  const endpoint = `${baseUrl.replace(/\/$/, '')}/wp-json/wc/v3/products/${id}?force=true`;
+  const headers = {};
+  let url = endpoint;
+
+  if (username && appPassword) {
+    headers.Authorization = `Basic ${Buffer.from(`${username}:${appPassword}`).toString('base64')}`;
+  } else if (consumerKey && consumerSecret) {
+    url = `${endpoint}&consumer_key=${encodeURIComponent(consumerKey)}&consumer_secret=${encodeURIComponent(consumerSecret)}`;
+  } else {
+    throw new Error('WordPress no esta configurado.');
+  }
+
+  const deleted = await requestJson(url, { method: 'DELETE', headers });
+  return { id: deleted?.id ?? id, source: 'wordpress' };
+}
+
 async function listPrestashopProducts() {
   const config = getConfig();
   const { baseUrl, apiKey } = config.prestashop;
@@ -352,6 +375,24 @@ async function createPrestashopProduct(product) {
   });
 
   return { id: created?.product?.id || null, source: 'prestashop' };
+}
+
+async function deletePrestashopProduct(id) {
+  const config = getConfig();
+  const { baseUrl, apiKey } = config.prestashop;
+  if (!baseUrl || !apiKey) {
+    throw new Error('PrestaShop no esta configurado.');
+  }
+
+  const endpoint = `${baseUrl.replace(/\/$/, '')}/api/products/${id}`;
+  const basicAuth = `Basic ${Buffer.from(`${apiKey}:`).toString('base64')}`;
+
+  await requestJson(endpoint, {
+    method: 'DELETE',
+    headers: { Authorization: basicAuth },
+  });
+
+  return { id, source: 'prestashop' };
 }
 
 async function listOdooProducts() {
@@ -448,6 +489,54 @@ async function createOdooProduct(product) {
   return { id: created?.id ?? created?.data?.id ?? null, source: 'odoo' };
 }
 
+async function deleteOdooProduct(id) {
+  const config = getConfig();
+  const { baseUrl, apiKey, productsPath } = config.odoo;
+  if (!baseUrl || !apiKey) {
+    throw new Error('Odoo no esta configurado.');
+  }
+
+  if (odooHasXmlRpcConfig(config)) {
+    const base = baseUrl.replace(/\/$/, '');
+    const uid = await odooAuthenticate(config);
+    const objectClient = createXmlRpcClient(`${base}/xmlrpc/2/object`);
+
+    try {
+      await xmlRpcMethodCall(objectClient, 'execute_kw', [
+        config.odoo.db,
+        uid,
+        config.odoo.apiKey,
+        'product.template',
+        'unlink',
+        [[id]],
+      ]);
+
+      return { id, source: 'odoo' };
+    } catch {
+      await xmlRpcMethodCall(objectClient, 'execute_kw', [
+        config.odoo.db,
+        uid,
+        config.odoo.apiKey,
+        'product.template',
+        'write',
+        [[id], { active: false }],
+      ]);
+
+      return { id, source: 'odoo', archived: true };
+    }
+  }
+
+  const endpoint = `${baseUrl.replace(/\/$/, '')}${productsPath}/${id}`;
+  await requestJson(endpoint, {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+    },
+  });
+
+  return { id, source: 'odoo' };
+}
+
 function mergeBySkuOrName(groups) {
   const merged = new Map();
 
@@ -463,12 +552,52 @@ function mergeBySkuOrName(groups) {
   return [...merged.values()];
 }
 
+function normalizeIdentityValue(value) {
+  return String(value || '').trim().toLowerCase();
+}
+
+function matchesIdentity(item, identity) {
+  const itemId = Number(item.id);
+  const itemSku = normalizeIdentityValue(item.sku);
+  const itemName = normalizeIdentityValue(item.nombre);
+
+  if (identity.sku && itemSku === identity.sku) return true;
+  if (identity.nombre && itemName === identity.nombre) return true;
+  return Number.isFinite(itemId) && itemId === identity.id;
+}
+
+async function deleteProductsByIdentity(listFn, deleteFn, identity) {
+  const items = await listFn();
+  const matchedIds = [...new Set(
+    items
+      .filter((item) => matchesIdentity(item, identity))
+      .map((item) => Number(item.id))
+      .filter((itemId) => Number.isFinite(itemId)),
+  )];
+
+  if (matchedIds.length === 0 && Number.isFinite(identity.id)) {
+    matchedIds.push(identity.id);
+  }
+
+  const settled = await Promise.allSettled(matchedIds.map((targetId) => deleteFn(targetId)));
+
+  return {
+    deletedIds: settled
+      .filter((result) => result.status === 'fulfilled')
+      .map((result) => result.value.id),
+    errors: settled
+      .filter((result) => result.status === 'rejected')
+      .map((result) => (result.reason instanceof Error ? result.reason.message : 'Error')),
+  };
+}
+
 export function registerProductsEndpoints(app) {
   app.get('/productos', async (_req, res) => {
     const settled = await Promise.allSettled([
       listPrestashopProducts(),
       listWordpressProducts(),
-      listOdooProducts(),
+      listOdooProducts(), 
+
     ]);
 
     const externalGroups = settled
@@ -563,16 +692,56 @@ export function registerProductsEndpoints(app) {
     res.json(updated);
   });
 
-  app.delete('/productos/:id', (req, res) => {
+  app.delete('/productos/:id', async (req, res) => {
     const id = Number(req.params.id);
-    const index = localProducts.findIndex((item) => item.id === id);
+    const identity = {
+      id,
+      sku: normalizeIdentityValue(req.query.sku),
+      nombre: normalizeIdentityValue(req.query.nombre),
+    };
 
-    if (index === -1) {
-      res.status(404).json({ error: 'Solo se pueden eliminar productos creados localmente en esta version.' });
+    if (!Number.isFinite(id)) {
+      res.status(400).json({ error: 'Id invalido.' });
       return;
     }
 
-    localProducts.splice(index, 1);
-    res.status(204).send();
+    const localBefore = localProducts.length;
+    const remaining = localProducts.filter((item) => !matchesIdentity(item, identity));
+    localProducts.length = 0;
+    localProducts.push(...remaining);
+    const localDeleted = localBefore - localProducts.length;
+
+    const results = await Promise.allSettled([
+      deleteProductsByIdentity(listPrestashopProducts, deletePrestashopProduct, identity),
+      deleteProductsByIdentity(listWordpressProducts, deleteWordpressProduct, identity),
+      deleteProductsByIdentity(listOdooProducts, deleteOdooProduct, identity),
+    ]);
+
+    const sync = {
+      prestashop:
+        results[0].status === 'fulfilled'
+          ? { ok: results[0].value.deletedIds.length > 0, ids: results[0].value.deletedIds, errors: results[0].value.errors }
+          : { ok: false, error: results[0].reason instanceof Error ? results[0].reason.message : 'Error' },
+      wordpress:
+        results[1].status === 'fulfilled'
+          ? { ok: results[1].value.deletedIds.length > 0, ids: results[1].value.deletedIds, errors: results[1].value.errors }
+          : { ok: false, error: results[1].reason instanceof Error ? results[1].reason.message : 'Error' },
+      odoo:
+        results[2].status === 'fulfilled'
+          ? { ok: results[2].value.deletedIds.length > 0, ids: results[2].value.deletedIds, errors: results[2].value.errors }
+          : { ok: false, error: results[2].reason instanceof Error ? results[2].reason.message : 'Error' },
+    };
+
+    const anyExternalDeleted =
+      sync.prestashop.ok ||
+      sync.wordpress.ok ||
+      sync.odoo.ok;
+
+    if (localDeleted === 0 && !anyExternalDeleted) {
+      res.status(404).json({ error: 'Producto no encontrado para eliminar en origen local ni externo.', sync });
+      return;
+    }
+
+    res.json({ ok: true, id, localDeleted, sync });
   });
 }

@@ -162,24 +162,16 @@ async function handleResponse<T>(response: Response): Promise<T> {
 export const productsApi = {
   /** Returns all products. Falls back to mock data when the API is unreachable. */
   getAll(): Promise<Product[]> {
-    // TODO: uncomment when the backend is ready
-    // if (!BASE_URL) return Promise.resolve(MOCK_PRODUCTS);
-    // return fetch(`${BASE_URL}/productos`)
-    //   .then((r) => handleResponse<Product[]>(r))
-    //   .catch(() => MOCK_PRODUCTS);
-    return Promise.resolve(MOCK_PRODUCTS);
+    if (!BASE_URL) return Promise.resolve(MOCK_PRODUCTS);
+    return fetch(`${BASE_URL}/productos`).then((r) => handleResponse<Product[]>(r));
   },
 
   /** Returns a single product by id. Falls back to mock data when the API is unreachable. */
   getById(id: number | string): Promise<Product | undefined> {
-    // TODO: uncomment when the backend is ready
-    // if (!BASE_URL) {
-    //   return Promise.resolve(MOCK_PRODUCTS.find((p) => p.id === Number(id)));
-    // }
-    // return fetch(`${BASE_URL}/productos/${id}`)
-    //   .then((r) => handleResponse<Product>(r))
-    //   .catch(() => MOCK_PRODUCTS.find((p) => p.id === Number(id)));
-    return Promise.resolve(MOCK_PRODUCTS.find((p) => p.id === Number(id)));
+    if (!BASE_URL) {
+      return Promise.resolve(MOCK_PRODUCTS.find((p) => p.id === Number(id)));
+    }
+    return fetch(`${BASE_URL}/productos/${id}`).then((r) => handleResponse<Product>(r));
   },
 
   /** Returns all unique categories. */
