@@ -7,8 +7,12 @@ export const ProductListPage = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [deletingId, setDeletingId] = useState<number | null>(null);
-  const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
+  const [deletingKey, setDeletingKey] = useState<string | null>(null);
+  const [confirmDeleteKey, setConfirmDeleteKey] = useState<string | null>(null);
+
+  const getRowKey = (product: Product, index: number) => {
+    return `${product.id}-${product.sku || 'sin-sku'}-${index}`;
+  };
 
   const fetchProducts = async () => {
     setLoading(true);
@@ -27,16 +31,19 @@ export const ProductListPage = () => {
     fetchProducts();
   }, []);
 
-  const handleDelete = async (id: number) => {
-    setDeletingId(id);
+  const handleDelete = async (product: Product, rowKey: string) => {
+    setDeletingKey(rowKey);
     try {
-      await productsApi.delete(id);
-      setProducts((prev) => prev.filter((p) => p.id !== id));
+      await productsApi.delete(product.id, {
+        sku: product.sku,
+        nombre: product.nombre,
+      });
+      setProducts((prev) => prev.filter((p, index) => getRowKey(p, index) !== rowKey));
     } catch (err) {
       setError(err instanceof Error ? err.message : 'No se pudo eliminar el producto.');
     } finally {
-      setDeletingId(null);
-      setConfirmDeleteId(null);
+      setDeletingKey(null);
+      setConfirmDeleteKey(null);
     }
   };
 
@@ -84,8 +91,11 @@ export const ProductListPage = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {products.map((product) => (
-                <tr key={product.id} className="hover:bg-slate-50">
+              {products.map((product, index) => {
+                const rowKey = getRowKey(product, index);
+
+                return (
+                <tr key={rowKey} className="hover:bg-slate-50">
                   <td className="py-3 pr-4">
                     <img
                       src={product.imagen_url}
@@ -108,17 +118,17 @@ export const ProductListPage = () => {
                       >
                         Editar
                       </Link>
-                      {confirmDeleteId === product.id ? (
+                      {confirmDeleteKey === rowKey ? (
                         <>
                           <button
-                            onClick={() => handleDelete(product.id)}
-                            disabled={deletingId === product.id}
+                            onClick={() => handleDelete(product, rowKey)}
+                            disabled={deletingKey === rowKey}
                             className="rounded-md bg-red-600 px-3 py-1 text-xs font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:bg-red-300"
                           >
-                            {deletingId === product.id ? 'Eliminando...' : 'Confirmar'}
+                            {deletingKey === rowKey ? 'Eliminando...' : 'Confirmar'}
                           </button>
                           <button
-                            onClick={() => setConfirmDeleteId(null)}
+                            onClick={() => setConfirmDeleteKey(null)}
                             className="rounded-md border border-slate-300 px-3 py-1 text-xs font-semibold text-slate-500 transition hover:border-slate-500"
                           >
                             Cancelar
@@ -126,7 +136,7 @@ export const ProductListPage = () => {
                         </>
                       ) : (
                         <button
-                          onClick={() => setConfirmDeleteId(product.id)}
+                          onClick={() => setConfirmDeleteKey(rowKey)}
                           className="rounded-md border border-red-200 px-3 py-1 text-xs font-semibold text-red-500 transition hover:border-red-500 hover:bg-red-50"
                         >
                           Eliminar
@@ -135,7 +145,8 @@ export const ProductListPage = () => {
                     </div>
                   </td>
                 </tr>
-              ))}
+                );
+              })}
             </tbody>
           </table>
         </div>
