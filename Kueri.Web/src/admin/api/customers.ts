@@ -4,6 +4,7 @@ export type Customer = {
   email: string;
   telefono?: string;
   direccion?: string;
+  ciudad?: string;
   fecha_registro: string;
 };
 
