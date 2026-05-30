@@ -63,6 +63,7 @@ export const CustomerListPage = () => {
                 <th className="pb-3 pr-4">Nombre</th>
                 <th className="pb-3 pr-4">Email</th>
                 <th className="pb-3 pr-4">Teléfono</th>
+                <th className="pb-3 pr-4">Ciudad</th>
                 <th className="pb-3 pr-4">Dirección</th>
                 <th className="pb-3">Registro</th>
               </tr>
@@ -73,6 +74,7 @@ export const CustomerListPage = () => {
                   <td className="py-3 pr-4 font-medium text-slate-900">{customer.nombre}</td>
                   <td className="py-3 pr-4 text-slate-500">{customer.email}</td>
                   <td className="py-3 pr-4 text-slate-700">{customer.telefono || '—'}</td>
+                  <td className="py-3 pr-4 text-slate-700">{customer.ciudad || '—'}</td>
                   <td className="py-3 pr-4 text-slate-700 max-w-xs truncate">{customer.direccion || '—'}</td>
                   <td className="py-3 text-slate-500">
                     {new Date(customer.fecha_registro).toLocaleDateString()}

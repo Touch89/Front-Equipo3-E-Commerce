@@ -7,6 +7,7 @@ type CustomerFormState = {
   email: string;
   telefono: string;
   direccion: string;
+  ciudad: string;
 };
 
 type SubmitStatus = {
@@ -19,6 +20,7 @@ const INITIAL_FORM: CustomerFormState = {
   email: '',
   telefono: '',
   direccion: '',
+  ciudad: '',
 };
 
 export const CreateCustomerPage = () => {
@@ -43,6 +45,7 @@ export const CreateCustomerPage = () => {
       email: form.email.trim(),
       telefono: form.telefono.trim() || undefined,
       direccion: form.direccion.trim() || undefined,
+      ciudad: form.ciudad.trim() || undefined,
     };
 
     setStatus({ kind: 'idle', message: '' });
@@ -108,6 +111,20 @@ export const CreateCustomerPage = () => {
               name="telefono"
               type="tel"
               value={form.telefono}
+              onChange={handleChange}
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-cyan-600"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="ciudad" className="mb-1 block text-sm font-semibold text-slate-700">
+              Ciudad (opcional)
+            </label>
+            <input
+              id="ciudad"
+              name="ciudad"
+              type="text"
+              value={form.ciudad}
               onChange={handleChange}
               className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-cyan-600"
             />
